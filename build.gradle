@@ -1,0 +1,40 @@
+plugins {
+    id 'java'
+    id 'org.jetbrains.kotlin.jvm' version '1.5.10'
+    id 'application'
+}
+
+group 'info.skyblond.telegram'
+version '1.0-SNAPSHOT'
+
+application {
+    mainClass = 'info.skyblond.telegram.icarus.MainKt'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+
+    // log
+    implementation 'ch.qos.logback:logback-classic:1.2.+'
+
+    // Json and Yaml
+    implementation 'com.fasterxml.jackson.core:jackson-core:2.12.+'
+    implementation 'com.fasterxml.jackson.core:jackson-annotations:2.12.+'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.+'
+    implementation 'com.fasterxml.jackson.module:jackson-module-kotlin:2.12.+'
+    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.12.+'
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.12.+'
+
+    // telegram bot api
+    implementation 'org.telegram:telegrambots:5.2.+'
+}
+
+test {
+    useJUnitPlatform()
+}
