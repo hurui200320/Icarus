@@ -21,8 +21,9 @@ class IcarusLongPollingBot(
     override fun getBotUsername(): String = botUsername
 
     override fun onUpdateReceived(update: Update) {
-        // We check if the update has a message and the message has text
+        // We check if the update has a message
         if (update.hasMessage()) {
+            logger.info("Received message: {}", update.message.toString())
             val message = SendMessage() // Create a SendMessage object with mandatory fields
             message.chatId = update.message.chatId.toString()
             message.text = "Hello, world!"
