@@ -8,7 +8,7 @@ import java.time.ZonedDateTime
 
 object AdminHandler : CommandHandler {
     private const val STATE_AUTH = "auth"
-    private const val USER_ID_KEY_ADMIN = "admin"
+    private const val USER_ID_MEMORY_KEY_ADMIN = "admin"
 
     // KEY -> List<UserId>
     private val userIdMemory = Memory<String, MutableSet<Long>>()
@@ -17,17 +17,17 @@ object AdminHandler : CommandHandler {
     private val authPhaseMemory = Memory<Pair<Long, Long>, Pair<Int?, Int>>()
 
     private fun addAdmin(userId: Long) {
-        if (userIdMemory[USER_ID_KEY_ADMIN] == null) {
-            userIdMemory[USER_ID_KEY_ADMIN] = mutableSetOf()
+        if (userIdMemory[USER_ID_MEMORY_KEY_ADMIN] == null) {
+            userIdMemory[USER_ID_MEMORY_KEY_ADMIN] = mutableSetOf()
         }
-        userIdMemory[USER_ID_KEY_ADMIN]!!.add(userId)
+        userIdMemory[USER_ID_MEMORY_KEY_ADMIN]!!.add(userId)
     }
 
     private fun getAdmins(): Set<Long> {
-        if (userIdMemory[USER_ID_KEY_ADMIN] == null) {
-            userIdMemory[USER_ID_KEY_ADMIN] = mutableSetOf()
+        if (userIdMemory[USER_ID_MEMORY_KEY_ADMIN] == null) {
+            userIdMemory[USER_ID_MEMORY_KEY_ADMIN] = mutableSetOf()
         }
-        return userIdMemory[USER_ID_KEY_ADMIN]!!
+        return userIdMemory[USER_ID_MEMORY_KEY_ADMIN]!!
     }
 
     private val authCommand = fun(core: IcarusCore, msg: Message): String? {
