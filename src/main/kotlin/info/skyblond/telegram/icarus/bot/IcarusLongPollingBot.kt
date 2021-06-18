@@ -19,6 +19,10 @@ class IcarusLongPollingBot(
     private val logger = LoggerFactory.getLogger(IcarusLongPollingBot::class.java)
     private val core = IcarusCore(this)
 
+    init {
+        AdminHandler.register(core)
+    }
+
     override fun getBotToken(): String = botToken
 
     override fun getBotUsername(): String = botUsername
@@ -28,7 +32,7 @@ class IcarusLongPollingBot(
             try {
                 // query session state
                 val sessionState = core.querySessionState(update.message.chatId)
-                val newState = core.stateHandlerMap[sessionState]!!.invoke(update.message)
+                val newState = core.queryStateHandler(sessionState).invoke(core, update.message)
                 core.setSessionState(update.message.chatId, newState)
             } catch (e: Throwable) {
                 logger.error("Error when handling message: ", e)
