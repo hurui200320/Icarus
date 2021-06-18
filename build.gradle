@@ -37,6 +37,9 @@ dependencies {
     // md5
     implementation 'commons-codec:commons-codec:1.15'
 
+    // Neo N3
+    implementation 'io.neow3j:devpack:3.11.2'
+
 }
 
 test {

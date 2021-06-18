@@ -1,11 +1,15 @@
 package info.skyblond.telegram.icarus.models
 
+import com.fasterxml.jackson.annotation.JsonIgnore
+import io.neow3j.wallet.Account
+import io.neow3j.wallet.Wallet
 import org.apache.commons.codec.digest.DigestUtils
 import org.telegram.telegrambots.bots.DefaultBotOptions
 
 data class ConfigPojo(
     val proxy: ProxyConfigPojo = ProxyConfigPojo(),
-    val bot: BotConfigPojo = BotConfigPojo()
+    val bot: BotConfigPojo = BotConfigPojo(),
+    val neo: NeoConfig = NeoConfig()
 )
 
 data class ProxyConfigPojo(
@@ -36,4 +40,15 @@ data class AuthChallenge(
     fun compareAnswer(answer: String): Boolean {
         return md5Answer.uppercase() == DigestUtils.md5Hex(answer).uppercase()
     }
+}
+
+data class NeoConfig(
+    val rpcServer: String = "http://127.0.0.1:50012",
+    val accountWIF: String = Account.create().ecKeyPair.exportAsWIF()
+) {
+    @JsonIgnore
+    val account: Account = Account.fromWIF(accountWIF)
+
+    @JsonIgnore
+    val wallet: Wallet = Wallet.withAccounts(account)
 }

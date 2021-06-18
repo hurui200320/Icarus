@@ -108,7 +108,7 @@ class IcarusCore(
         message.chatId = chatId.toString()
         message.replyToMessageId = messageId
         message.text = text
-        message.parseMode = "MarkdownV2"
+//        message.parseMode = "MarkdownV2"
 
         bot.safeExecute(message)
     }
@@ -122,7 +122,7 @@ class IcarusCore(
         val message = SendMessage()
         message.chatId = chatId.toString()
         message.text = text
-        message.parseMode = "MarkdownV2"
+//        message.parseMode = "MarkdownV2"
 
         val optional = bot.safeExecute(message)
 

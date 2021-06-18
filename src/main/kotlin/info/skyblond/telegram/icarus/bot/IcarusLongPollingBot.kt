@@ -21,6 +21,7 @@ class IcarusLongPollingBot(
 
     init {
         AdminHandler.register(core)
+        NeoHandler.register(core)
     }
 
     override fun getBotToken(): String = botToken

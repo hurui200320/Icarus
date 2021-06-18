@@ -2,12 +2,16 @@ package info.skyblond.telegram.icarus.bot
 
 import info.skyblond.telegram.icarus.utils.ConfigHelper
 import info.skyblond.telegram.icarus.utils.Memory
+import org.slf4j.LoggerFactory
 import org.telegram.telegrambots.meta.api.objects.Message
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
+import kotlin.system.exitProcess
 
 object AdminHandler : CommandHandler {
-    private const val STATE_AUTH = "auth"
+    private val logger = LoggerFactory.getLogger(AdminHandler::class.java)
+
+    private const val STATE_AUTH = "admin_auth"
     private const val USER_ID_MEMORY_KEY_ADMIN = "admin"
 
     // KEY -> List<UserId>
@@ -16,6 +20,7 @@ object AdminHandler : CommandHandler {
     // <chatId, userId> -> <last message id, phase>
     private val authPhaseMemory = Memory<Pair<Long, Long>, Pair<Int?, Int>>()
 
+    @Synchronized
     private fun addAdmin(userId: Long) {
         if (userIdMemory[USER_ID_MEMORY_KEY_ADMIN] == null) {
             userIdMemory[USER_ID_MEMORY_KEY_ADMIN] = mutableSetOf()
@@ -81,6 +86,23 @@ object AdminHandler : CommandHandler {
         return IcarusCore.STATE_IDLE
     }
 
+    private val stopCommand = fun(core: IcarusCore, msg: Message): String? {
+        if (getAdmins().contains(msg.from.id)) {
+            logger.warn("Application stopped by admin @{}", msg.from.userName)
+            core.replyToMessage(
+                msg.chatId, msg.messageId,
+                "As you wished. Bye."
+            )
+            exitProcess(0)
+        } else {
+            core.replyToMessage(
+                msg.chatId, msg.messageId,
+                "You are not my admin. You can't shut me down. Fuck off."
+            )
+        }
+        return IcarusCore.STATE_IDLE
+    }
+
     override val stateHandlers: List<Pair<String, (IcarusCore, Message) -> String?>>
         get() = listOf(
             STATE_AUTH to authCommand
@@ -89,6 +111,7 @@ object AdminHandler : CommandHandler {
         get() = listOf(
             BotCommand.TIME to timeCommand,
             BotCommand.AUTH to authCommand,
-            BotCommand.HELLO to helloCommand
+            BotCommand.HELLO to helloCommand,
+            BotCommand.STOP to stopCommand
         )
 }
