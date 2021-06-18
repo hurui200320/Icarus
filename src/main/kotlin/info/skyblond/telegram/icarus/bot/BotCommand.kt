@@ -10,5 +10,8 @@ enum class BotCommand(
     // Admin handler
     AUTH("auth", "start the protocol to make you an admin"),
     TIME("time", "get the UTC time on server"),
-    HELLO("hello", "a gentle greeting")
+    HELLO("hello", "a gentle greeting"),
+
+    // Neo handler
+    NEO("neo", "interact with our work deployed on Neo N3 blockchain"),
 }

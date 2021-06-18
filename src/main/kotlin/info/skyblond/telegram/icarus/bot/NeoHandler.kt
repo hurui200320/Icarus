@@ -7,6 +7,7 @@ import org.telegram.telegrambots.meta.api.objects.Message
  * Specifically the Cat Token and WCA contract.
  *
  * Functions:
+ *  + /neo info - give some info about Cat Token and WCA Contract, address etc.
  *  + /neo query - choose what to query: CAT/GAS balance or WCA details
  *  + /neo wallet - open a wallet by giving a WIF string or exit
  *  + /neo transfer - transfer cat token to some address
