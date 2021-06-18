@@ -33,6 +33,10 @@ dependencies {
 
     // telegram bot api
     implementation 'org.telegram:telegrambots:5.2.+'
+
+    // md5
+    implementation 'commons-codec:commons-codec:1.15'
+
 }
 
 test {

@@ -1,5 +1,6 @@
-package info.skyblond.telegram.icarus
+package info.skyblond.telegram.icarus.models
 
+import org.apache.commons.codec.digest.DigestUtils
 import org.telegram.telegrambots.bots.DefaultBotOptions
 
 data class ConfigPojo(
@@ -24,5 +25,15 @@ data class ProxyConfigPojo(
 
 data class BotConfigPojo(
     val username: String = "Icarus",
-    val token: String = "1234567890:FILL_YOUR_BOT_TOKEN_HERE"
+    val token: String = "1234567890:FILL_YOUR_BOT_TOKEN_HERE",
+    val authChallenge: List<AuthChallenge> = listOf(AuthChallenge())
 )
+
+data class AuthChallenge(
+    val challenge: String = "challenge",
+    val md5Answer: String = DigestUtils.md5Hex("Answer").uppercase()
+) {
+    fun compareAnswer(answer: String): Boolean {
+        return md5Answer.uppercase() == DigestUtils.md5Hex(answer).uppercase()
+    }
+}

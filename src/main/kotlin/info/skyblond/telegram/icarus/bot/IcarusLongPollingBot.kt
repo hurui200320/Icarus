@@ -3,35 +3,51 @@ package info.skyblond.telegram.icarus.bot
 import org.slf4j.LoggerFactory
 import org.telegram.telegrambots.bots.DefaultBotOptions
 import org.telegram.telegrambots.bots.TelegramLongPollingBot
+import org.telegram.telegrambots.meta.api.methods.BotApiMethod
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.objects.Update
-import org.telegram.telegrambots.meta.exceptions.TelegramApiException
+import java.io.Serializable
+import java.util.*
 
 
 class IcarusLongPollingBot(
     private val botUsername: String,
     private val botToken: String,
     botOptions: DefaultBotOptions = DefaultBotOptions()
-) : TelegramLongPollingBot(botOptions) {
+) : TelegramLongPollingBot(botOptions), IcarusAbstractBot {
 
     private val logger = LoggerFactory.getLogger(IcarusLongPollingBot::class.java)
+    private val core = IcarusCore(this)
 
     override fun getBotToken(): String = botToken
 
     override fun getBotUsername(): String = botUsername
 
     override fun onUpdateReceived(update: Update) {
-        // We check if the update has a message
         if (update.hasMessage()) {
-            logger.info("Received message: {}", update.message.toString())
-            val message = SendMessage() // Create a SendMessage object with mandatory fields
-            message.chatId = update.message.chatId.toString()
-            message.text = "Hello, world!"
             try {
-                execute(message)
-            } catch (e: TelegramApiException) {
-                logger.error("Error when handling updates: ", e)
+                // query session state
+                val sessionState = core.querySessionState(update.message.chatId)
+                val newState = core.stateHandlerMap[sessionState]!!.invoke(update.message)
+                core.setSessionState(update.message.chatId, newState)
+            } catch (e: Throwable) {
+                logger.error("Error when handling message: ", e)
+                val message = SendMessage()
+                message.chatId = update.message.chatId.toString()
+                message.replyToMessageId = update.message.messageId
+                message.text = "Error occurred when handling this message"
+                safeExecute(message)
             }
+        }
+    }
+
+    override fun <T : Serializable, Method : BotApiMethod<T>> safeExecute(method: Method): Optional<T> {
+        return try {
+            // not if this return null
+            Optional.ofNullable(execute(method))
+        } catch (e: Throwable) {
+            logger.error("Error when deleting message: ", e)
+            Optional.empty()
         }
     }
 }

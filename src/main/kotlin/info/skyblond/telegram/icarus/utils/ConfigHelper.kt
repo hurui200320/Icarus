@@ -3,7 +3,7 @@ package info.skyblond.telegram.icarus.utils
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.module.kotlin.readValue
-import info.skyblond.telegram.icarus.ConfigPojo
+import info.skyblond.telegram.icarus.models.ConfigPojo
 import org.slf4j.LoggerFactory
 import java.io.File
 
@@ -12,27 +12,28 @@ object ConfigHelper {
 
     private val mapper = ObjectMapper(YAMLFactory())
 
+    private val configFile = File("./config.yaml")
+
     var config = ConfigPojo()
         private set
 
     init {
         mapper.findAndRegisterModules()
-        config = readConfigOrCreateIfNotExist(File("./config.yaml"))
+        config = readConfigOrDefaultIfNotExist()
+        writeConfig(config)
     }
 
-    private fun readConfigOrCreateIfNotExist(configFile: File): ConfigPojo {
+    private fun readConfigOrDefaultIfNotExist(): ConfigPojo {
         return if (configFile.exists()) {
             logger.info("Found config at '{}'", configFile.canonicalPath)
             mapper.readValue(configFile)
         } else {
             logger.info("Config not found, init the default at '{}'", configFile.canonicalPath)
-            writeConfig(config, configFile)
             config
         }
     }
 
-    private fun writeConfig(config: ConfigPojo, configFile: File) {
-        logger.info("Config write into file: {}", configFile.canonicalPath)
+    private fun writeConfig(config: ConfigPojo) {
         mapper.writeValue(configFile, config)
     }
 }
